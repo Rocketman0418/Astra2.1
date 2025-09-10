@@ -96,6 +96,16 @@ export const useVisualization = () => {
 - Visually stunning and informative
 - Production-ready quality
 
+Create actual working charts, graphs, and visual elements using HTML5 Canvas, SVG, or CSS. Include:
+- Interactive bar charts, line graphs, pie charts where data exists
+- Visual progress bars, gauges, and meters
+- Icons, emojis, and visual metaphors
+- Animated elements and hover effects
+- Color-coded sections (red for negative, green for positive)
+- Visual hierarchy with proper spacing and typography
+
+Make it visually engaging with real graphics, not just text layouts.
+
 Return ONLY the complete HTML code. Make it visually spectacular with REAL working charts and data visualization!`;
 
       console.log('🤖 Generating visualization with Gemini...');
