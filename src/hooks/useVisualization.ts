@@ -28,37 +28,6 @@ export const useVisualization = () => {
           throw new Error('Gemini API key not found');
         }
 
-        // Clean up the response to ensure it's valid HTML
-        let cleanedContent = content.trim();
-        
-        // Remove any markdown code blocks if present
-        cleanedContent = cleanedContent.replace(/```html\n?/g, '').replace(/```\n?/g, '');
-        
-        // Ensure it starts with DOCTYPE if it's a complete HTML document
-        if (!cleanedContent.toLowerCase().includes('<!doctype') && !cleanedContent.toLowerCase().includes('<html')) {
-          // If it's just HTML content without document structure, wrap it
-          cleanedContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Visualization</title>
-    <style>
-        body { 
-            margin: 0; 
-            padding: 20px; 
-            background: #111827; 
-            color: white; 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-    </style>
-</head>
-<body>
-    ${cleanedContent}
-</body>
-</html>`;
-        }
-
         // Initialize Gemini AI directly
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ 
@@ -66,7 +35,6 @@ export const useVisualization = () => {
           generationConfig: {
             temperature: 0.7,
             topK: 40,
-            content: cleanedContent,
             maxOutputTokens: 8192,
           }
         });
@@ -134,6 +102,37 @@ Return ONLY the complete HTML code with no explanations, comments, or markdown f
         throw new Error('Empty response from Gemini API');
       }
 
+      // Clean up the response to ensure it's valid HTML
+      let cleanedContent = content.trim();
+      
+      // Remove any markdown code blocks if present
+      cleanedContent = cleanedContent.replace(/```html\n?/g, '').replace(/```\n?/g, '');
+      
+      // Ensure it starts with DOCTYPE if it's a complete HTML document
+      if (!cleanedContent.toLowerCase().includes('<!doctype') && !cleanedContent.toLowerCase().includes('<html')) {
+        // If it's just HTML content without document structure, wrap it
+        cleanedContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualization</title>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 20px; 
+            background: #111827; 
+            color: white; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    ${cleanedContent}
+</body>
+</html>`;
+      }
+
       console.log('✅ Visualization generated successfully');
 
       setVisualizations(prev => ({
@@ -141,7 +140,7 @@ Return ONLY the complete HTML code with no explanations, comments, or markdown f
         [messageId]: {
           messageId,
           isGenerating: false,
-          content: content,
+          content: cleanedContent,
           isVisible: false
         }
       }));
