@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { VisualizationState } from '../types';
 
 export const useVisualization = () => {
@@ -20,51 +21,83 @@ export const useVisualization = () => {
     }));
 
     try {
-      // Use Vite API route for development
-      const apiUrl = '/api/visualization';
+      // Get API key from environment
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
       
-      console.log('Making request to:', apiUrl);
-      
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(import.meta.env.VITE_GEMINI_API_KEY && {
-            'x-gemini-api-key': import.meta.env.VITE_GEMINI_API_KEY
-          })
-        },
-        body: JSON.stringify({ messageText })
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Visualization API error:', response.status, errorText);
-        throw new Error('Failed to generate visualization');
+      if (!apiKey) {
+        throw new Error('Gemini API key not found');
       }
 
-      const data = await response.json();
-      const visualizationContent = data.content || 'No visualization could be generated.';
+      // Initialize Gemini AI directly
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash",
+        generationConfig: {
+          temperature: 0.3,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 10800,
+        }
+      });
+
+      const prompt = `Create an interactive HTML visualization for this data/message: "${messageText}"
+
+Requirements:
+- Complete HTML with inline CSS and JavaScript
+- Dark theme (background: #1f2937, text: white, accent: #2563eb)
+- Responsive design
+- Interactive elements where appropriate
+- Professional appearance
+- Use charts, graphs, or visual elements as appropriate for the data
+- Maximum 10,000 characters
+
+Return only the HTML code, no explanations.`;
+
+      console.log('🤖 Generating visualization with Gemini...');
+      
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      
+      if (!response.candidates || response.candidates.length === 0) {
+        throw new Error('No response from Gemini API');
+      }
+
+      const content = response.candidates[0].content?.parts?.[0]?.text;
+      
+      if (!content) {
+        throw new Error('Empty response from Gemini API');
+      }
+
+      console.log('✅ Visualization generated successfully');
 
       setVisualizations(prev => ({
         ...prev,
         [messageId]: {
           messageId,
           isGenerating: false,
-          content: visualizationContent,
+          content: content,
           isVisible: false
         }
       }));
 
       // Auto-show the visualization after generation
       setCurrentVisualization(messageId);
+      
     } catch (error) {
       console.error('Error generating visualization:', error);
+      
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      
       setVisualizations(prev => ({
         ...prev,
         [messageId]: {
           messageId,
           isGenerating: false,
-          content: '<div style="padding: 20px; text-align: center; color: #ef4444;">Failed to generate visualization. Please try again.</div>',
+          content: `<div style="padding: 20px; text-align: center; color: #ef4444; background: #1f2937; border-radius: 8px;">
+            <h3>Failed to generate visualization</h3>
+            <p>Error: ${errorMessage}</p>
+            <p>Please try again.</p>
+          </div>`,
           isVisible: false
         }
       }));
