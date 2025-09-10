@@ -10,6 +10,10 @@ export const useVisualization = () => {
   const generateVisualization = useCallback(async (messageId: string, messageText: string) => {
     setIsGenerating(true);
 
+    // Debug: Log the full message text being sent to Gemini
+    console.log('📊 Full message text being sent to Gemini:', messageText);
+    console.log('📊 Message text length:', messageText.length);
+
     setVisualizations(prev => ({
       ...prev,
       [messageId]: {
@@ -39,8 +43,8 @@ export const useVisualization = () => {
           }
         });
 
-        const prompt = `You are an expert data visualization developer. Create a comprehensive, interactive HTML visualization for this content: "${messageText}"
 
+        const prompt = `Based on the message text below, generate a comprehensive graphic visualization dashboard to help understand the financial information. 
 🎯 MISSION: Create a stunning, interactive data visualization that brings the content to life with actual working charts, graphs, and visual elements.
 
 📊 EXTRACT & VISUALIZE ALL DATA from the message text:
@@ -49,6 +53,8 @@ export const useVisualization = () => {
 - Key insights, metrics, performance indicators
 - Any quantifiable information
 
+        console.log('📄 Raw Gemini response length:', cleanedContent.length);
+        console.log('📄 Raw Gemini response preview:', cleanedContent.substring(0, 1000));
 CRITICAL: Extract ALL numerical data, financial figures, percentages, dates, and specific values from the message text. Do not use placeholder values like $0.00 or generic numbers. Use the EXACT figures mentioned in the message.
 
 For example, if the message mentions:
