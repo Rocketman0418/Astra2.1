@@ -102,7 +102,7 @@ Requirements:
         }],
         generationConfig: {
           temperature: 0.7,
-          maxOutputTokens: 1000
+          maxOutputTokens: 8192
         }
       })
     });
