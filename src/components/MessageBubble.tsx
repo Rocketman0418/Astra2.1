@@ -1,4 +1,5 @@
 import React from 'react';
+import { VisualizationButton } from './VisualizationButton';
 import { Message } from '../types';
 
 const formatMessageText = (text: string): JSX.Element => {
@@ -70,11 +71,17 @@ const formatMessageText = (text: string): JSX.Element => {
 interface MessageBubbleProps {
   message: Message;
   onToggleExpansion: (messageId: string) => void;
+  onCreateVisualization?: (messageId: string, messageText: string) => void;
+  onViewVisualization?: (messageId: string) => void;
+  visualizationState?: any;
 }
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({
   message,
-  onToggleExpansion
+  onToggleExpansion,
+  onCreateVisualization,
+  onViewVisualization,
+  visualizationState
 }) => {
   const isLongMessage = message.text.length > 300;
   const shouldTruncate = isLongMessage && !message.isExpanded;
@@ -154,6 +161,18 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             minute: '2-digit' 
           })}
         </div>
+        
+        {!message.isUser && onCreateVisualization && onViewVisualization && (
+          <div className="mt-2 md:mt-3">
+            <VisualizationButton
+              messageId={message.id}
+              messageText={message.text}
+              onCreateVisualization={onCreateVisualization}
+              onViewVisualization={onViewVisualization}
+              visualizationState={visualizationState}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

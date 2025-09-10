@@ -23,18 +23,25 @@ export const useVisualization = () => {
 
     try {
       const apiUrl = import.meta.env.DEV 
-        ? '/api/generate-visualization' 
+        ? '/api/generate-visualization'
         : '/.netlify/functions/generate-visualization';
+      
+      console.log('Making request to:', apiUrl);
       
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(import.meta.env.VITE_GEMINI_API_KEY && {
+            'x-gemini-api-key': import.meta.env.VITE_GEMINI_API_KEY
+          })
         },
         body: JSON.stringify({ messageText: truncatedText })
       });
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Visualization API error:', response.status, errorText);
         throw new Error('Failed to generate visualization');
       }
 
