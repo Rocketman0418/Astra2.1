@@ -89,38 +89,10 @@ Return ONLY the complete HTML code with no explanations, comments, or markdown f
 
       console.log('🤖 Generating visualization with Gemini...');
       
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      
-      if (!response.candidates || response.candidates.length === 0) {
-        throw new Error('No response from Gemini API');
-      }
 
-      const content = response.candidates[0].content?.parts?.[0]?.text;
-      
-      if (!content) {
-        throw new Error('Empty response from Gemini API');
-      }
-
-      // Clean up the response to ensure it's valid HTML
-      let cleanedContent = content.trim();
-      
-      // Remove any markdown code blocks if present
-      cleanedContent = cleanedContent.replace(/```html\n?/g, '').replace(/```\n?/g, '');
-      
       // Ensure it starts with DOCTYPE if it's a complete HTML document
-      if (!cleanedContent.toLowerCase().includes('<!doctype') && !cleanedContent.toLowerCase().includes('<html')) {
-        // If it's just HTML content without document structure, wrap it
-        cleanedContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Visualization</title>
-    <style>
         body { 
-            margin: 0; 
-            padding: 20px; 
             background: #111827; 
             color: white; 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
