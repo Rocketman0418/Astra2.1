@@ -66,26 +66,9 @@ exports.handler = async (event, context) => {
     const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
     console.log('Making request to Gemini 2.5 Flash API...');
 
-    const prompt = `Based on the message text, generate a brief yet comprehensive graphic visualization to help me better understand the information. Use the color scheme that matches the app's design (dark theme with blue gradients from #2563eb to #7c3aed, gray backgrounds from #374151 to #1f2937, and white text).
+    const prompt = `Create HTML visualization for: "${messageText.substring(0, 200)}"
 
-Message text: ${messageText}
-
-Requirements:
-- Generate only the inner HTML content for the visualization (no DOCTYPE, html, head, or body tags)
-- Include all CSS inline using style attributes
-- Use the app's color scheme: dark backgrounds (#1f2937, #374151), blue-purple gradients (#2563eb to #7c3aed), white text
-- Create a brief visual representation or summary
-- Keep it simple and focused
-- Ensure it's responsive and works on mobile devices
-
-The output should be simple, self-contained HTML content that can be inserted into an existing page structure.`;
-    const prompt = `Create a simple HTML visualization for this text: "${messageText}"
-
-Requirements:
-- Only HTML with inline CSS (no external scripts)
-- Dark theme: background #1f2937, text white, blue accents #2563eb
-- Maximum 200 words of content
-- Simple layout with divs and basic styling`;
+Output only HTML with inline CSS. Dark theme: bg #1f2937, text white, blue #2563eb. Max 3 divs.`;
 
     console.log('Sending request to Gemini 2.5 Flash...');
     
@@ -101,21 +84,20 @@ Requirements:
           }]
         }],
         generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 8192
+          temperature: 0.3,
+          maxOutputTokens: 500,
+          topK: 20,
+          topP: 0.8
         }
       })
     });
 
     // Add a race condition with timeout to handle Netlify's function timeout
     const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Request timed out')), 20000); // 20 second timeout
+      setTimeout(() => reject(new Error('Request timed out')), 24000); // 24 second timeout for Pro plan
     });
 
-    const responseData = await Promise.race([
-      response.json(),
-      timeoutPromise
-    ]);
+    const responseData = await response.json();
 
     console.log('Gemini API response status:', response.status);
     
@@ -146,13 +128,11 @@ Requirements:
     // If it's a timeout, provide a simpler fallback visualization
     if (error.message.includes('timed out')) {
       const fallbackVisualization = `
-        <div style="padding: 20px; background: #1f2937; color: white; border-radius: 12px; text-align: center;">
-          <h3 style="color: #2563eb; margin-bottom: 16px;">📊 Data Summary</h3>
-          <p style="margin-bottom: 12px; color: #d1d5db;">Based on your message:</p>
-          <div style="background: #374151; padding: 12px; border-radius: 8px; margin: 12px 0;">
-            <p style="font-style: italic; color: #9ca3af;">"${messageText.substring(0, 100)}${messageText.length > 100 ? '...' : ''}"</p>
+        <div style="padding: 20px; background: #1f2937; color: white; border-radius: 8px;">
+          <h3 style="color: #2563eb; margin: 0 0 12px 0;">📊 Summary</h3>
+          <div style="background: #374151; padding: 12px; border-radius: 6px;">
+            <p style="margin: 0; color: #d1d5db;">${messageText.substring(0, 150)}${messageText.length > 150 ? '...' : ''}</p>
           </div>
-          <p style="color: #60a5fa; font-size: 14px;">⚡ Quick visualization generated due to processing constraints</p>
         </div>
       `;
       
