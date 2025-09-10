@@ -45,7 +45,7 @@ export const useVisualization = () => {
 
 
         const prompt = `Based on the message text below, generate a comprehensive graphic visualization dashboard to help understand the financial information. 
-🎯 MISSION: Create a stunning, interactive data visualization that brings the content to life with actual working charts, graphs, and visual elements.
+🎯 MISSION: Create a stunning, interactive data visualization that brings the content to life with actual working charts, graphs, and visual elements.`;
         // Determine the type of content and create appropriate visualization
         const isFinancialData = messageText.toLowerCase().includes('total assets') || 
                                messageText.toLowerCase().includes('revenue') || 
@@ -54,11 +54,11 @@ export const useVisualization = () => {
                                messageText.toLowerCase().includes('profit') ||
                                messageText.toLowerCase().includes('loss');
 
-        let prompt = '';
+        let prompt2 = '';
 
         if (isFinancialData) {
           // Financial visualization prompt
-          prompt = `Based on the financial message text below, create a comprehensive financial dashboard visualization.
+          prompt2 = `Based on the financial message text below, create a comprehensive financial dashboard visualization.
 
 🎯 MISSION: Extract the EXACT financial data from the message and create stunning interactive charts.
 
@@ -71,12 +71,12 @@ ${messageText.includes('Monthly Burn Rate:') ? `- Monthly Burn: ${messageText.ma
 ${messageText.includes('Current Assets:') ? `- Current Cash: ${messageText.match(/Current Assets:\s*\$([0-9,]+\.?[0-9]*)/)?.[0] || 'EXTRACT FROM TEXT'}` : ''}
 
 🔍 STEP-BY-STEP DATA EXTRACTION:
-1. Search for "Total Assets: $" and extract the dollar amount after it
-2. Search for "Total Revenues: $" and extract the dollar amount  
-3. Search for "Net Income (Loss): -$" and extract the loss amount
-4. Search for "Cash Runway:" and extract the months value
-5. Search for "Monthly Burn Rate: $" and extract the burn amount
-6. Search for "Current Assets: $" and extract the cash amount
+1. Search for "Total Assets: $\" and extract the dollar amount after it
+2. Search for "Total Revenues: $\" and extract the dollar amount  
+3. Search for "Net Income (Loss): -$\" and extract the loss amount
+4. Search for "Cash Runway:\" and extract the months value
+5. Search for "Monthly Burn Rate: $\" and extract the burn amount
+6. Search for "Current Assets: $\" and extract the cash amount
 7. Use these EXACT values in your charts - NO PLACEHOLDERS!
 
 🎨 VISUAL REQUIREMENTS:
@@ -92,7 +92,7 @@ ${messageText}
 Return ONLY complete HTML code with actual financial data extracted and visualized.`;
         } else {
           // Non-financial visualization prompt
-          prompt = `Based on the message text below, create an appropriate interactive visualization dashboard.
+          prompt2 = `Based on the message text below, create an appropriate interactive visualization dashboard.
 
 🎯 MISSION: Analyze the content type and create a relevant visual representation.
 
@@ -124,7 +124,7 @@ Return ONLY complete HTML code with contextually appropriate visualization.`;
 
       console.log('🤖 Generating visualization with Gemini...');
       
-      const result = await model.generateContent(prompt);
+      const result = await model.generateContent(prompt2);
       const response = await result.response;
       let cleanedContent = response.text();
 
