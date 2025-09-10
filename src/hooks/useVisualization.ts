@@ -41,51 +41,62 @@ export const useVisualization = () => {
 
         const prompt = `You are an expert data visualization developer. Create a comprehensive, interactive HTML visualization for this content: "${messageText}"
 
-CRITICAL REQUIREMENTS:
-1. **Complete standalone HTML document** with DOCTYPE, html, head, and body tags
-2. **Inline CSS and JavaScript** - no external dependencies
-3. **Dark theme**: Background #111827, cards #1f2937, text white, primary accent #3b82f6, secondary #8b5cf6
-4. **Multiple interactive charts/graphs** using Canvas API or SVG
-5. **Responsive design** that works on mobile and desktop
-6. **Professional dashboard layout** with multiple sections
-7. **Real data visualization** - extract numbers, trends, categories from the content
-8. **Interactive elements**: hover effects, clickable legends, animated transitions
-9. **Modern UI**: gradients, shadows, rounded corners, smooth animations
-10. **Data insights**: Show trends, comparisons, key metrics prominently
+🎯 MISSION: Create a stunning, interactive data visualization that brings the content to life with actual working charts, graphs, and visual elements.
 
-VISUALIZATION TYPES TO INCLUDE (choose 2-3 most relevant):
-- Bar charts for comparisons
-- Line charts for trends over time
-- Pie/donut charts for proportions
-- Area charts for cumulative data
-- Scatter plots for correlations
-- Gauge charts for metrics
-- Progress bars for percentages
-- Heat maps for intensity data
-- Network diagrams for relationships
+📊 EXTRACT & VISUALIZE ALL DATA from the message text:
+- Numbers, percentages, dates, categories, trends
+- Relationships, comparisons, hierarchies
+- Key insights, metrics, performance indicators
+- Any quantifiable information
 
-LAYOUT STRUCTURE:
-- Header with title and key metrics
-- Grid layout with multiple chart sections
-- Interactive legend/controls
-- Footer with data source info
+🎨 VISUAL REQUIREMENTS:
+- **Complete standalone HTML** with DOCTYPE, head, body
+- **Dark theme**: #111827 background, #1f2937 cards, white text, #3b82f6/#8b5cf6 accents
+- **ACTUAL WORKING CHARTS** using Canvas API, SVG, or CSS animations
+- **Interactive elements**: hover effects, clickable areas, animated counters
+- **Icons & graphics**: Use CSS shapes, SVG icons, emojis, visual metaphors
+- **Responsive design**: Works on mobile and desktop
 
-STYLING REQUIREMENTS:
-- Use CSS Grid and Flexbox for layout
-- Smooth CSS transitions (0.3s ease)
-- Hover states on all interactive elements
-- Loading animations where appropriate
-- Mobile-first responsive breakpoints
-- Professional typography (system fonts)
+📈 CREATE REAL CHARTS (not placeholders):
+- Animated bar charts with actual data bars
+- Line graphs with plotted points and curves  
+- Pie charts with colored segments and percentages
+- Progress bars that fill to actual values
+- Gauge meters with moving needles
+- Interactive timelines with events
+- Comparison tables with visual indicators
+- Trend arrows and status indicators
 
-JAVASCRIPT FEATURES:
-- Chart animations on load
-- Interactive tooltips
-- Data filtering/sorting
-- Smooth transitions between states
+⚡ INTERACTIVITY & ANIMATION:
+- Charts animate on page load
+- Hover tooltips with detailed info
+- Clickable legends that highlight data
+- Smooth transitions and micro-interactions
+- Loading animations for visual appeal
 - Touch-friendly mobile interactions
 
-Return ONLY the complete HTML code with no explanations, comments, or markdown formatting. The HTML should be production-ready and visually impressive.`;
+🎪 VISUAL STORYTELLING:
+- Use colors to convey meaning (red=negative, green=positive)
+- Add visual hierarchy with typography and spacing
+- Include relevant emojis and icons
+- Create visual flow that guides the eye
+- Use gradients, shadows, and modern effects
+
+💻 TECHNICAL SPECS:
+- Pure HTML/CSS/JavaScript (no external libraries)
+- Canvas API or SVG for complex charts
+- CSS Grid/Flexbox for layout
+- Smooth CSS transitions (0.3s ease)
+- Mobile-first responsive breakpoints
+
+🚀 MAKE IT IMPRESSIVE:
+- Professional dashboard appearance
+- Multiple chart types in one view
+- Real data extracted from the message
+- Visually stunning and informative
+- Production-ready quality
+
+Return ONLY the complete HTML code. Make it visually spectacular with REAL working charts and data visualization!`;
 
       console.log('🤖 Generating visualization with Gemini...');
       
@@ -132,6 +143,8 @@ Return ONLY the complete HTML code with no explanations, comments, or markdown f
         }
       }));
 
+      // Automatically show the visualization after generation
+      setCurrentVisualization(messageId);
     } catch (error) {
       console.error('❌ Error generating visualization:', error);
       
