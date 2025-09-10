@@ -71,15 +71,14 @@ exports.handler = async (event, context) => {
 Message text: ${messageText}
 
 Requirements:
-    Generate only the inner HTML content for the visualization (no DOCTYPE, html, head, or body tags)
-    Include all CSS inline using style attributes or <style> tags within the content
-    Include all JavaScript inline using <script> tags within the content
+- Generate only the inner HTML content for the visualization (no DOCTYPE, html, head, or body tags)
+- Include all CSS inline using style attributes
 - Use the app's color scheme: dark backgrounds (#1f2937, #374151), blue-purple gradients (#2563eb to #7c3aed), white text
-- Make it interactive and comprehensive
+- Create a brief visual representation or summary
+- Keep it simple and focused
 - Ensure it's responsive and works on mobile devices
-- Include proper data visualization libraries if needed (Chart.js, D3.js via CDN)
 
-The output should be self-contained HTML content that can be inserted into an existing page structure.`;
+The output should be simple, self-contained HTML content that can be inserted into an existing page structure.`;
 
     console.log('Sending request to Gemini 2.5 Flash...');
     
