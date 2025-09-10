@@ -35,7 +35,7 @@ export const useVisualization = () => {
           generationConfig: {
             temperature: 0.7,
             topK: 40,
-            maxOutputTokens: 8192,
+            maxOutputTokens: 100000,
           }
         });
 
