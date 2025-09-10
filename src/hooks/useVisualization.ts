@@ -46,94 +46,81 @@ export const useVisualization = () => {
 
         const prompt = `Based on the message text below, generate a comprehensive graphic visualization dashboard to help understand the financial information. 
 🎯 MISSION: Create a stunning, interactive data visualization that brings the content to life with actual working charts, graphs, and visual elements.
+        // Determine the type of content and create appropriate visualization
+        const isFinancialData = messageText.toLowerCase().includes('total assets') || 
+                               messageText.toLowerCase().includes('revenue') || 
+                               messageText.toLowerCase().includes('cash') || 
+                               messageText.toLowerCase().includes('expenses') ||
+                               messageText.toLowerCase().includes('profit') ||
+                               messageText.toLowerCase().includes('loss');
 
-📊 CRITICAL: YOU MUST EXTRACT AND USE THE EXACT NUMERICAL DATA FROM THE MESSAGE TEXT BELOW.
-DO NOT USE PLACEHOLDER VALUES LIKE $0.00 OR GENERIC NUMBERS.
+        let prompt = '';
 
-        console.log('📄 Raw Gemini response length:', cleanedContent.length);
-        console.log('📄 Raw Gemini response preview:', cleanedContent.substring(0, 1000));
-REQUIRED DATA TO EXTRACT AND DISPLAY:
-- Total Assets: Look for "Total Assets:" followed by dollar amount
-- Total Revenue: Look for "Total Revenues:" or "Stripe Revenue" 
-- Net Loss/Income: Look for "Net Income (Loss):" with negative values
-- Cash Balance: Look for current cash amounts and "Current Assets"
-- Monthly Burn Rate: Look for "Monthly Burn Rate" or "burn" calculations
-- Cash Runway: Look for "Cash Runway:" and month calculations
-- Operating Expenses: Look for "Total Operating Expenses"
-- Major expense categories like Travel, Software, Events
-- Monthly cash balance trends with specific dates and amounts
+        if (isFinancialData) {
+          // Financial visualization prompt
+          prompt = `Based on the financial message text below, create a comprehensive financial dashboard visualization.
 
-EXAMPLE OF WHAT TO LOOK FOR IN THE MESSAGE:
-If you see "Total Assets: $217,741.72" → Display exactly $217,741.72
-If you see "Net Income (Loss): -$90,661.38" → Display exactly -$90,661.38
-If you see "Cash Runway: 7.77 months" → Display exactly 7.77 months
-If you see "Total Revenues: $7,896.98" → Display exactly $7,896.98
-If you see "Monthly Burn Rate: $11,293.74" → Display exactly $11,293.74
+🎯 MISSION: Extract the EXACT financial data from the message and create stunning interactive charts.
+
+📊 CRITICAL DATA EXTRACTION - USE THESE EXACT VALUES:
+${messageText.includes('Total Assets: $') ? `- Total Assets: ${messageText.match(/Total Assets:\s*\$([0-9,]+\.?[0-9]*)/)?.[0] || 'EXTRACT FROM TEXT'}` : ''}
+${messageText.includes('Total Revenues: $') ? `- Total Revenue: ${messageText.match(/Total Revenues:\s*\$([0-9,]+\.?[0-9]*)/)?.[0] || 'EXTRACT FROM TEXT'}` : ''}
+${messageText.includes('Net Income (Loss): -$') ? `- Net Loss: ${messageText.match(/Net Income \(Loss\):\s*-?\$([0-9,]+\.?[0-9]*)/)?.[0] || 'EXTRACT FROM TEXT'}` : ''}
+${messageText.includes('Cash Runway:') ? `- Cash Runway: ${messageText.match(/Cash Runway:\s*\$?([0-9,]+\.?[0-9]*)\s*months?/)?.[0] || 'EXTRACT FROM TEXT'} months` : ''}
+${messageText.includes('Monthly Burn Rate:') ? `- Monthly Burn: ${messageText.match(/Monthly Burn Rate:\s*\$([0-9,]+\.?[0-9]*)/)?.[0] || 'EXTRACT FROM TEXT'}` : ''}
+${messageText.includes('Current Assets:') ? `- Current Cash: ${messageText.match(/Current Assets:\s*\$([0-9,]+\.?[0-9]*)/)?.[0] || 'EXTRACT FROM TEXT'}` : ''}
+
+🔍 STEP-BY-STEP DATA EXTRACTION:
+1. Search for "Total Assets: $" and extract the dollar amount after it
+2. Search for "Total Revenues: $" and extract the dollar amount  
+3. Search for "Net Income (Loss): -$" and extract the loss amount
+4. Search for "Cash Runway:" and extract the months value
+5. Search for "Monthly Burn Rate: $" and extract the burn amount
+6. Search for "Current Assets: $" and extract the cash amount
+7. Use these EXACT values in your charts - NO PLACEHOLDERS!
 
 🎨 VISUAL REQUIREMENTS:
-- **Complete standalone HTML** with DOCTYPE, head, body
-- **Dark theme**: #111827 background, #1f2937 cards, white text, #3b82f6/#8b5cf6 accents
-- **ACTUAL WORKING CHARTS** using Canvas API, SVG, or CSS animations
-- **Interactive elements**: hover effects, clickable areas, animated counters
-- **Icons & graphics**: Use CSS shapes, SVG icons, emojis, visual metaphors
-- **Responsive design**: Works on mobile and desktop
+- Complete standalone HTML with dark theme (#111827 background)
+- Real working charts using Canvas API or SVG
+- Interactive elements with hover effects
+- Professional financial dashboard appearance
+- Color coding: red for losses, green for positive, blue for neutral
 
-🔍 DATA PARSING INSTRUCTIONS:
-1. Read through the entire message text carefully
-2. Find each financial figure mentioned with its label
-3. Extract the exact number including dollar signs and decimals
-4. Use these exact figures in your visualization - NO APPROXIMATIONS
+MESSAGE TEXT TO ANALYZE:
+${messageText}
 
-📈 CREATE REAL CHARTS (not placeholders):
-- Animated bar charts with actual data bars
-- Line graphs with plotted points and curves  
-- Pie charts with colored segments and percentages
-- Progress bars that fill to actual values
-- Gauge meters with moving needles
-- Interactive timelines with events
-- Comparison tables with visual indicators
-- Trend arrows and status indicators
+Return ONLY complete HTML code with actual financial data extracted and visualized.`;
+        } else {
+          // Non-financial visualization prompt
+          prompt = `Based on the message text below, create an appropriate interactive visualization dashboard.
 
-⚡ INTERACTIVITY & ANIMATION:
-- Charts animate on page load
-- Hover tooltips with detailed info
-- Clickable legends that highlight data
-- Smooth transitions and micro-interactions
-- Loading animations for visual appeal
-- Touch-friendly mobile interactions
+🎯 MISSION: Analyze the content type and create a relevant visual representation.
 
-🎪 VISUAL STORYTELLING:
-- Use colors to convey meaning (red=negative, green=positive)
-- Add visual hierarchy with typography and spacing
-- Include relevant emojis and icons
-- Create visual flow that guides the eye
-- Use gradients, shadows, and modern effects
+CONTENT ANALYSIS:
+- If it's about meetings: Create a meeting insights dashboard
+- If it's about strategy: Create a strategic overview visualization  
+- If it's about projects: Create a project status dashboard
+- If it's about team updates: Create a team activity visualization
 
-💻 TECHNICAL SPECS:
-- Pure HTML/CSS/JavaScript (no external libraries)
-- Canvas API or SVG for complex charts
-- CSS Grid/Flexbox for layout
-- Smooth CSS transitions (0.3s ease)
-- Mobile-first responsive breakpoints
-
-🚀 MAKE IT IMPRESSIVE:
+🎨 VISUAL REQUIREMENTS:
+- Complete standalone HTML with dark theme (#111827 background)
+- Interactive elements and modern design
+- Relevant icons, charts, and visual elements
 - Professional dashboard appearance
-- Multiple chart types in one view
-- Real data extracted from the message
-- Visually stunning and informative
-- Production-ready quality
+- Color-coded sections for different topics
 
-Create actual working charts, graphs, and visual elements using HTML5 Canvas, SVG, or CSS. Include:
-- Interactive bar charts, line graphs, pie charts where data exists
-- Visual progress bars, gauges, and meters
-- Icons, emojis, and visual metaphors
-- Animated elements and hover effects
-- Color-coded sections (red for negative, green for positive)
-- Visual hierarchy with proper spacing and typography
+📊 CREATE APPROPRIATE VISUALIZATIONS:
+- Timeline charts for meeting discussions
+- Progress indicators for project status
+- Network diagrams for team connections
+- Flowcharts for strategic processes
+- Interactive cards for key insights
 
-Make it visually engaging with real graphics, not just text layouts.
+MESSAGE TEXT TO VISUALIZE:
+${messageText}
 
-Return ONLY the complete HTML code. Make it visually spectacular with REAL working charts and data visualization!`;
+Return ONLY complete HTML code with contextually appropriate visualization.`;
+        }
 
       console.log('🤖 Generating visualization with Gemini...');
       
