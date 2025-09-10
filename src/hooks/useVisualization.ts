@@ -91,24 +91,26 @@ Return ONLY the complete HTML code with no explanations, comments, or markdown f
       
       const result = await model.generateContent(prompt);
       const response = await result.response;
-      let content = response.text();
+      let cleanedContent = response.text();
 
       // Clean up the response - remove markdown code blocks if present
-      let cleanedContent = content.replace(/```html\n?/g, '').replace(/```\n?/g, '').trim();
+      cleanedContent = cleanedContent.replace(/```html\n?/g, '').replace(/```\n?/g, '').trim();
 
       // Ensure it starts with DOCTYPE if it's a complete HTML document
-      if (!cleanedContent.toLowerCase().includes('<!doctype')) {
+      if (!cleanedContent.toLowerCase().includes('<!doctype') && !cleanedContent.toLowerCase().includes('<html')) {
         cleanedContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Visualization</title>
+    <title>Visualization</title>
     <style>
         body { 
             background: #111827; 
             color: white; 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
         }
     </style>
 </head>
@@ -130,11 +132,8 @@ Return ONLY the complete HTML code with no explanations, comments, or markdown f
         }
       }));
 
-      // Auto-show the visualization after generation
-      setCurrentVisualization(messageId);
-      
     } catch (error) {
-      console.error('Error generating visualization:', error);
+      console.error('❌ Error generating visualization:', error);
       
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       
