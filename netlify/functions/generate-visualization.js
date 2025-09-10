@@ -79,6 +79,13 @@ Requirements:
 - Ensure it's responsive and works on mobile devices
 
 The output should be simple, self-contained HTML content that can be inserted into an existing page structure.`;
+    const prompt = `Create a simple HTML visualization for this text: "${messageText}"
+
+Requirements:
+- Only HTML with inline CSS (no external scripts)
+- Dark theme: background #1f2937, text white, blue accents #2563eb
+- Maximum 200 words of content
+- Simple layout with divs and basic styling`;
 
     console.log('Sending request to Gemini 2.5 Flash...');
     
@@ -95,9 +102,7 @@ The output should be simple, self-contained HTML content that can be inserted in
         }],
         generationConfig: {
           temperature: 0.7,
-          topK: 40,
-          topP: 1,
-          // Removed token limitations as requested
+          maxOutputTokens: 1000
         }
       })
     });
