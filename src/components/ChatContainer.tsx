@@ -4,6 +4,7 @@ import { MessageBubble } from './MessageBubble';
 import { LoadingIndicator } from './LoadingIndicator';
 import { ChatInput } from './ChatInput';
 import { VisualizationView } from './VisualizationView';
+import { VisualizationLoadingView } from './VisualizationLoadingView';
 import { useChat } from '../hooks/useChat';
 import { useVisualization } from '../hooks/useVisualization';
 
@@ -23,7 +24,8 @@ export const ChatContainer: React.FC = () => {
     showVisualization,
     hideVisualization,
     getVisualization,
-    currentVisualization
+    currentVisualization,
+    isGenerating
   } = useVisualization();
   // Register service worker for PWA
   useEffect(() => {
@@ -52,6 +54,11 @@ export const ChatContainer: React.FC = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [messagesEndRef]);
+
+  // Show loading view when generating visualization
+  if (isGenerating) {
+    return <VisualizationLoadingView />;
+  }
 
   // Show visualization view if one is currently active
   if (currentVisualization) {

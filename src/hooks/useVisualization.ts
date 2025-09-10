@@ -4,12 +4,10 @@ import { VisualizationState } from '../types';
 export const useVisualization = () => {
   const [visualizations, setVisualizations] = useState<Record<string, VisualizationState>>({});
   const [currentVisualization, setCurrentVisualization] = useState<string | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const generateVisualization = useCallback(async (messageId: string, messageText: string) => {
-    // Truncate very long messages to speed up processing
-    const truncatedText = messageText.length > 1000 
-      ? messageText.substring(0, 1000) + '...'
-      : messageText;
+    setIsGenerating(true);
 
     setVisualizations(prev => ({
       ...prev,
@@ -36,7 +34,7 @@ export const useVisualization = () => {
             'x-gemini-api-key': import.meta.env.VITE_GEMINI_API_KEY
           })
         },
-        body: JSON.stringify({ messageText: truncatedText })
+        body: JSON.stringify({ messageText })
       });
 
       if (!response.ok) {
@@ -57,6 +55,9 @@ export const useVisualization = () => {
           isVisible: false
         }
       }));
+
+      // Auto-show the visualization after generation
+      setCurrentVisualization(messageId);
     } catch (error) {
       console.error('Error generating visualization:', error);
       setVisualizations(prev => ({
@@ -68,6 +69,8 @@ export const useVisualization = () => {
           isVisible: false
         }
       }));
+    } finally {
+      setIsGenerating(false);
     }
   }, []);
 
@@ -96,5 +99,6 @@ export const useVisualization = () => {
     hideVisualization,
     getVisualization,
     currentVisualization
+    isGenerating
   };
 };

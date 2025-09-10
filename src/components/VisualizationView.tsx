@@ -21,7 +21,7 @@ export const VisualizationView: React.FC<VisualizationViewProps> = ({
             <ArrowLeft className="w-6 h-6 text-white" />
           </button>
           <h1 className="text-xl font-bold text-white">
-            Data Visualization
+            Go Back to Chat
           </h1>
         </div>
       </header>
