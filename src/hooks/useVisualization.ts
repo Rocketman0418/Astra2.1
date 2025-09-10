@@ -49,6 +49,14 @@ export const useVisualization = () => {
 - Key insights, metrics, performance indicators
 - Any quantifiable information
 
+CRITICAL: Extract ALL numerical data, financial figures, percentages, dates, and specific values from the message text. Do not use placeholder values like $0.00 or generic numbers. Use the EXACT figures mentioned in the message.
+
+For example, if the message mentions:
+- Total Assets: $217,741.72 - use this exact figure
+- Net Loss: -$90,661.38 - use this exact figure  
+- Cash Runway: 9 months - use this exact figure
+- Revenue: $7,896.98 - use this exact figure
+
 🎨 VISUAL REQUIREMENTS:
 - **Complete standalone HTML** with DOCTYPE, head, body
 - **Dark theme**: #111827 background, #1f2937 cards, white text, #3b82f6/#8b5cf6 accents
