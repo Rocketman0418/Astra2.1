@@ -47,21 +47,28 @@ export const useVisualization = () => {
         const prompt = `Based on the message text below, generate a comprehensive graphic visualization dashboard to help understand the financial information. 
 🎯 MISSION: Create a stunning, interactive data visualization that brings the content to life with actual working charts, graphs, and visual elements.
 
-📊 EXTRACT & VISUALIZE ALL DATA from the message text:
-- Numbers, percentages, dates, categories, trends
-- Relationships, comparisons, hierarchies
-- Key insights, metrics, performance indicators
-- Any quantifiable information
+📊 CRITICAL: YOU MUST EXTRACT AND USE THE EXACT NUMERICAL DATA FROM THE MESSAGE TEXT BELOW.
+DO NOT USE PLACEHOLDER VALUES LIKE $0.00 OR GENERIC NUMBERS.
 
         console.log('📄 Raw Gemini response length:', cleanedContent.length);
         console.log('📄 Raw Gemini response preview:', cleanedContent.substring(0, 1000));
-CRITICAL: Extract ALL numerical data, financial figures, percentages, dates, and specific values from the message text. Do not use placeholder values like $0.00 or generic numbers. Use the EXACT figures mentioned in the message.
+REQUIRED DATA TO EXTRACT AND DISPLAY:
+- Total Assets: Look for "Total Assets:" followed by dollar amount
+- Total Revenue: Look for "Total Revenues:" or "Stripe Revenue" 
+- Net Loss/Income: Look for "Net Income (Loss):" with negative values
+- Cash Balance: Look for current cash amounts and "Current Assets"
+- Monthly Burn Rate: Look for "Monthly Burn Rate" or "burn" calculations
+- Cash Runway: Look for "Cash Runway:" and month calculations
+- Operating Expenses: Look for "Total Operating Expenses"
+- Major expense categories like Travel, Software, Events
+- Monthly cash balance trends with specific dates and amounts
 
-For example, if the message mentions:
-- Total Assets: $217,741.72 - use this exact figure
-- Net Loss: -$90,661.38 - use this exact figure  
-- Cash Runway: 9 months - use this exact figure
-- Revenue: $7,896.98 - use this exact figure
+EXAMPLE OF WHAT TO LOOK FOR IN THE MESSAGE:
+If you see "Total Assets: $217,741.72" → Display exactly $217,741.72
+If you see "Net Income (Loss): -$90,661.38" → Display exactly -$90,661.38
+If you see "Cash Runway: 7.77 months" → Display exactly 7.77 months
+If you see "Total Revenues: $7,896.98" → Display exactly $7,896.98
+If you see "Monthly Burn Rate: $11,293.74" → Display exactly $11,293.74
 
 🎨 VISUAL REQUIREMENTS:
 - **Complete standalone HTML** with DOCTYPE, head, body
@@ -70,6 +77,12 @@ For example, if the message mentions:
 - **Interactive elements**: hover effects, clickable areas, animated counters
 - **Icons & graphics**: Use CSS shapes, SVG icons, emojis, visual metaphors
 - **Responsive design**: Works on mobile and desktop
+
+🔍 DATA PARSING INSTRUCTIONS:
+1. Read through the entire message text carefully
+2. Find each financial figure mentioned with its label
+3. Extract the exact number including dollar signs and decimals
+4. Use these exact figures in your visualization - NO APPROXIMATIONS
 
 📈 CREATE REAL CHARTS (not placeholders):
 - Animated bar charts with actual data bars
