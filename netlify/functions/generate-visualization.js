@@ -29,7 +29,22 @@ exports.handler = async (event, context) => {
 
   try {
     console.log('Parsing request body...');
-    const { messageText } = JSON.parse(event.body);
+    const body = event.body;
+    console.log('Raw body:', body ? body.substring(0, 100) + '...' : 'null');
+    
+    if (!body) {
+      console.log('No request body provided');
+      return {
+        statusCode: 400,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ error: 'Request body is required' })
+      };
+    }
+    
+    const { messageText } = JSON.parse(body);
     
     if (!messageText) {
       console.log('No message text provided');
@@ -65,6 +80,19 @@ exports.handler = async (event, context) => {
     // Updated to use Gemini 2.5 Flash
     const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
     console.log('Making request to Gemini 2.5 Flash API...');
+    console.log('Request payload size:', JSON.stringify({
+      contents: [{
+        parts: [{
+          text: prompt
+        }]
+      }],
+      generationConfig: {
+        temperature: 0.3,
+        maxOutputTokens: 10800,
+        topK: 40,
+        topP: 0.95
+      }
+    }).length, 'bytes');
 
     const prompt = `Create HTML visualization for: "${messageText.substring(0, 200)}"
 
@@ -72,7 +100,11 @@ Output only HTML with inline CSS. Dark theme: bg #1f2937, text white, blue #2563
     console.log('Message text length:', messageText.length);
     console.log('Prompt length:', prompt.length);
     
-    const response = await fetch(GEMINI_URL, {
+    console.log('Starting Gemini API request...');
+    const startTime = Date.now();
+    
+    const response = await Promise.race([
+      fetch(GEMINI_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -90,7 +122,14 @@ Output only HTML with inline CSS. Dark theme: bg #1f2937, text white, blue #2563
           topP: 0.95
         }
       })
-    });
+      }),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Gemini API request timed out after 23 seconds')), 23000)
+      )
+    ]);
+    
+    const requestTime = Date.now() - startTime;
+    console.log('Gemini API request completed in:', requestTime, 'ms');
 
     // Add a race condition with timeout to handle Netlify's function timeout
     const timeoutPromise = new Promise((_, reject) => {
