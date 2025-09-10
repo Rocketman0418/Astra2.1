@@ -98,7 +98,7 @@ export const useVisualization = () => {
     showVisualization,
     hideVisualization,
     getVisualization,
-    currentVisualization
+    currentVisualization,
     isGenerating
   };
 };
