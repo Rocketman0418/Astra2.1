@@ -89,9 +89,22 @@ Return ONLY the complete HTML code with no explanations, comments, or markdown f
 
       console.log('🤖 Generating visualization with Gemini...');
       
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      let content = response.text();
+
+      // Clean up the response - remove markdown code blocks if present
+      let cleanedContent = content.replace(/```html\n?/g, '').replace(/```\n?/g, '').trim();
 
       // Ensure it starts with DOCTYPE if it's a complete HTML document
+      if (!cleanedContent.toLowerCase().includes('<!doctype')) {
+        cleanedContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualization</title>
+    <style>
         body { 
             background: #111827; 
             color: white; 
