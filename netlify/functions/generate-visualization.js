@@ -107,6 +107,16 @@ Requirements:
       })
     });
 
+    // Add a race condition with timeout to handle Netlify's function timeout
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Request timed out')), 20000); // 20 second timeout
+    });
+
+    const responseData = await Promise.race([
+      response.json(),
+      timeoutPromise
+    ]);
+
     console.log('Gemini API response status:', response.status);
     
     if (!response.ok) {
@@ -115,7 +125,7 @@ Requirements:
       throw new Error('Failed to generate visualization');
     }
 
-    const data = await response.json();
+    const data = responseData;
     console.log('Gemini API response received, candidates:', data.candidates?.length);
     
     const visualizationContent = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No visualization could be generated.';
@@ -132,6 +142,30 @@ Requirements:
 
   } catch (error) {
     console.error('Function error:', error.message, error.stack);
+    
+    // If it's a timeout, provide a simpler fallback visualization
+    if (error.message.includes('timed out')) {
+      const fallbackVisualization = `
+        <div style="padding: 20px; background: #1f2937; color: white; border-radius: 12px; text-align: center;">
+          <h3 style="color: #2563eb; margin-bottom: 16px;">📊 Data Summary</h3>
+          <p style="margin-bottom: 12px; color: #d1d5db;">Based on your message:</p>
+          <div style="background: #374151; padding: 12px; border-radius: 8px; margin: 12px 0;">
+            <p style="font-style: italic; color: #9ca3af;">"${messageText.substring(0, 100)}${messageText.length > 100 ? '...' : ''}"</p>
+          </div>
+          <p style="color: #60a5fa; font-size: 14px;">⚡ Quick visualization generated due to processing constraints</p>
+        </div>
+      `;
+      
+      return {
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ content: fallbackVisualization })
+      };
+    }
+    
     return {
       statusCode: 500,
       headers: {
