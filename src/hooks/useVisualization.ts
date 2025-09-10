@@ -20,7 +20,8 @@ export const useVisualization = () => {
     }));
 
     try {
-      const apiUrl = '/.netlify/functions/generate-visualization';
+      // Use local API endpoint for development
+      const apiUrl = '/api/generate-visualization';
       
       console.log('Making request to:', apiUrl);
       
