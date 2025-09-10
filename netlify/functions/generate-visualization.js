@@ -69,8 +69,8 @@ exports.handler = async (event, context) => {
     const prompt = `Create HTML visualization for: "${messageText.substring(0, 200)}"
 
 Output only HTML with inline CSS. Dark theme: bg #1f2937, text white, blue #2563eb. Max 3 divs.`;
-
-    console.log('Sending request to Gemini 2.5 Flash...');
+    console.log('Message text length:', messageText.length);
+    console.log('Prompt length:', prompt.length);
     
     const response = await fetch(GEMINI_URL, {
       method: 'POST',
@@ -85,9 +85,9 @@ Output only HTML with inline CSS. Dark theme: bg #1f2937, text white, blue #2563
         }],
         generationConfig: {
           temperature: 0.3,
-          maxOutputTokens: 500,
-          topK: 20,
-          topP: 0.8
+          maxOutputTokens: 10800,
+          topK: 40,
+          topP: 0.95
         }
       })
     });
@@ -97,18 +97,32 @@ Output only HTML with inline CSS. Dark theme: bg #1f2937, text white, blue #2563
       setTimeout(() => reject(new Error('Request timed out')), 24000); // 24 second timeout for Pro plan
     });
 
-    const responseData = await response.json();
-
-    console.log('Gemini API response status:', response.status);
+    console.log('Response received, status:', response.status);
+    console.log('Response headers:', JSON.stringify(Object.fromEntries(response.headers.entries())));
     
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Gemini API error:', response.status, response.statusText, errorText);
-      throw new Error('Failed to generate visualization');
+      console.error('Gemini API error response:', errorText);
+      throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
     }
+    
+    const responseData = await response.json();
+    console.log('Response data structure:', Object.keys(responseData));
 
+    console.log('Gemini API response status:', response.status);
+    
     const data = responseData;
     console.log('Gemini API response received, candidates:', data.candidates?.length);
+    
+    if (!data.candidates || data.candidates.length === 0) {
+      console.error('No candidates in response:', JSON.stringify(data));
+      throw new Error('No candidates returned from Gemini API');
+    }
+    
+    if (data.candidates[0].finishReason && data.candidates[0].finishReason !== 'STOP') {
+      console.error('Generation finished with reason:', data.candidates[0].finishReason);
+      console.error('Full candidate:', JSON.stringify(data.candidates[0]));
+    }
     
     const visualizationContent = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No visualization could be generated.';
     console.log('Successfully generated visualization, length:', visualizationContent.length);
