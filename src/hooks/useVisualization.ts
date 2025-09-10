@@ -20,9 +20,7 @@ export const useVisualization = () => {
     }));
 
     try {
-      const apiUrl = import.meta.env.DEV 
-        ? '/api/generate-visualization'
-        : '/.netlify/functions/generate-visualization';
+      const apiUrl = '/.netlify/functions/generate-visualization';
       
       console.log('Making request to:', apiUrl);
       
