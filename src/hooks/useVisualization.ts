@@ -10,7 +10,6 @@ export const useVisualization = () => {
   const generateVisualization = useCallback(async (messageId: string, messageText: string) => {
     setIsGenerating(true);
 
-    // Debug: Log the full message text being sent to Gemini
     console.log('📊 Full message text being sent to Gemini:', messageText);
     console.log('📊 Message text length:', messageText.length);
 
@@ -44,87 +43,22 @@ export const useVisualization = () => {
         });
 
 
-        const prompt = `Based on the message text below, generate a comprehensive graphic visualization dashboard to help understand the financial information. 
-🎯 MISSION: Create a stunning, interactive data visualization that brings the content to life with actual working charts, graphs, and visual elements.`;
-        // Determine the type of content and create appropriate visualization
-        const isFinancialData = messageText.toLowerCase().includes('total assets') || 
-                               messageText.toLowerCase().includes('revenue') || 
-                               messageText.toLowerCase().includes('cash') || 
-                               messageText.toLowerCase().includes('expenses') ||
-                               messageText.toLowerCase().includes('profit') ||
-                               messageText.toLowerCase().includes('loss');
+        const prompt = `Create a visual dashboard to help understand the information in the message below.
 
-        let prompt2 = '';
+INSTRUCTIONS:
+- Read the message and create an appropriate interactive visualization
+- Use dark theme with background color #111827
+- Use blue (#3b82f6), purple (#8b5cf6), green (#10b981), and red (#ef4444) colors
+- Make it professional and visually appealing
+- Include charts, graphs, or visual elements that represent the key information
+- Return complete HTML code only
 
-        if (isFinancialData) {
-          // Financial visualization prompt
-          prompt2 = `Based on the financial message text below, create a comprehensive financial dashboard visualization.
-
-🎯 MISSION: Extract the EXACT financial data from the message and create stunning interactive charts.
-
-📊 CRITICAL DATA EXTRACTION - USE THESE EXACT VALUES:
-${messageText.includes('Total Assets: $') ? `- Total Assets: ${messageText.match(/Total Assets:\s*\$([0-9,]+\.?[0-9]*)/)?.[0] || 'EXTRACT FROM TEXT'}` : ''}
-${messageText.includes('Total Revenues: $') ? `- Total Revenue: ${messageText.match(/Total Revenues:\s*\$([0-9,]+\.?[0-9]*)/)?.[0] || 'EXTRACT FROM TEXT'}` : ''}
-${messageText.includes('Net Income (Loss): -$') ? `- Net Loss: ${messageText.match(/Net Income \(Loss\):\s*-?\$([0-9,]+\.?[0-9]*)/)?.[0] || 'EXTRACT FROM TEXT'}` : ''}
-${messageText.includes('Cash Runway:') ? `- Cash Runway: ${messageText.match(/Cash Runway:\s*\$?([0-9,]+\.?[0-9]*)\s*months?/)?.[0] || 'EXTRACT FROM TEXT'} months` : ''}
-${messageText.includes('Monthly Burn Rate:') ? `- Monthly Burn: ${messageText.match(/Monthly Burn Rate:\s*\$([0-9,]+\.?[0-9]*)/)?.[0] || 'EXTRACT FROM TEXT'}` : ''}
-${messageText.includes('Current Assets:') ? `- Current Cash: ${messageText.match(/Current Assets:\s*\$([0-9,]+\.?[0-9]*)/)?.[0] || 'EXTRACT FROM TEXT'}` : ''}
-
-🔍 STEP-BY-STEP DATA EXTRACTION:
-1. Search for "Total Assets: $\" and extract the dollar amount after it
-2. Search for "Total Revenues: $\" and extract the dollar amount  
-3. Search for "Net Income (Loss): -$\" and extract the loss amount
-4. Search for "Cash Runway:\" and extract the months value
-5. Search for "Monthly Burn Rate: $\" and extract the burn amount
-6. Search for "Current Assets: $\" and extract the cash amount
-7. Use these EXACT values in your charts - NO PLACEHOLDERS!
-
-🎨 VISUAL REQUIREMENTS:
-- Complete standalone HTML with dark theme (#111827 background)
-- Real working charts using Canvas API or SVG
-- Interactive elements with hover effects
-- Professional financial dashboard appearance
-- Color coding: red for losses, green for positive, blue for neutral
-
-MESSAGE TEXT TO ANALYZE:
-${messageText}
-
-Return ONLY complete HTML code with actual financial data extracted and visualized.`;
-        } else {
-          // Non-financial visualization prompt
-          prompt2 = `Based on the message text below, create an appropriate interactive visualization dashboard.
-
-🎯 MISSION: Analyze the content type and create a relevant visual representation.
-
-CONTENT ANALYSIS:
-- If it's about meetings: Create a meeting insights dashboard
-- If it's about strategy: Create a strategic overview visualization  
-- If it's about projects: Create a project status dashboard
-- If it's about team updates: Create a team activity visualization
-
-🎨 VISUAL REQUIREMENTS:
-- Complete standalone HTML with dark theme (#111827 background)
-- Interactive elements and modern design
-- Relevant icons, charts, and visual elements
-- Professional dashboard appearance
-- Color-coded sections for different topics
-
-📊 CREATE APPROPRIATE VISUALIZATIONS:
-- Timeline charts for meeting discussions
-- Progress indicators for project status
-- Network diagrams for team connections
-- Flowcharts for strategic processes
-- Interactive cards for key insights
-
-MESSAGE TEXT TO VISUALIZE:
-${messageText}
-
-Return ONLY complete HTML code with contextually appropriate visualization.`;
-        }
+MESSAGE TEXT:
+${messageText}`;
 
       console.log('🤖 Generating visualization with Gemini...');
       
-      const result = await model.generateContent(prompt2);
+      const result = await model.generateContent(prompt);
       const response = await result.response;
       let cleanedContent = response.text();
 
