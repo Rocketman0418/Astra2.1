@@ -20,8 +20,8 @@ export const useVisualization = () => {
     }));
 
     try {
-      // Use local API endpoint for development
-      const apiUrl = '/api/generate-visualization';
+      // Use Vite API route for development
+      const apiUrl = '/api/visualization';
       
       console.log('Making request to:', apiUrl);
       
