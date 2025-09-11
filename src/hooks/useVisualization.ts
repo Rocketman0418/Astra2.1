@@ -31,11 +31,13 @@ export const useVisualization = () => {
           throw new Error('Gemini API key not found');
         }
 
-        const model = genAI.getGenerativeModel({ 
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+
+        const prompt = `Create a comprehensive visual dashboard to help understand the information in the message below.
 
 MESSAGE TEXT:
 ${messageText}`;
-        const prompt = `Create a comprehensive visual dashboard to help understand the information in the message below.
 
       console.log('🤖 Generating visualization with Gemini...');
       
