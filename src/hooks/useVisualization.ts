@@ -36,8 +36,20 @@ export const useVisualization = () => {
 
         const prompt = `Create a comprehensive visual dashboard to help understand the information in the message below.
 
+CRITICAL: You must return ONLY valid HTML code that can be rendered directly in a browser. Do not include any explanatory text, markdown formatting, or code block markers.
+
+REQUIREMENTS:
+- Return ONLY HTML code (starting with <!DOCTYPE html>)
+- No markdown code blocks (```html or ```)
+- No explanatory text before or after the HTML
+- The HTML must be complete and self-contained
+- Include all CSS styles within <style> tags in the <head>
+- Use the color scheme: background #111827 (dark), primary #3b82f6 (blue), secondary #8b5cf6 (purple), accent #10b981 (green), warning #f59e0b (yellow), text #ffffff (white)
+
 MESSAGE TEXT:
-${messageText}`;
+${messageText}
+
+Return only the HTML code - no other text or formatting.`;
 
       console.log('🤖 Generating visualization with Gemini...');
       
