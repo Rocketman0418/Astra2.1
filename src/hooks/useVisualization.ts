@@ -51,6 +51,9 @@ DESIGN REQUIREMENTS:
 - Use blue (#3b82f6), purple (#8b5cf6), and cyan (#06b6d4) for accents and highlights
 - Match the visual style of a modern dark dashboard
 - Include proper spacing, rounded corners, and subtle shadows
+- Use graphics, emojis, and charts as needed to enhance the visualization
+- Include visual elements like progress bars, icons, charts, and infographics where appropriate
+- Make the dashboard visually engaging with relevant emojis and graphical elements
 
 MESSAGE TEXT:
 ${messageText}
