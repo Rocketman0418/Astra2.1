@@ -52,11 +52,16 @@ DESIGN REQUIREMENTS:
 - Match the visual style of a modern dark dashboard
 - Include proper spacing, rounded corners, and subtle shadows
 
+MESSAGE TEXT:
 ${messageText}
 
 Return only the HTML code - no other text or formatting.`;
 
       console.log('🤖 Generating visualization with Gemini...');
+      console.log('🔧 Using settings: temperature=1.0, topK=64, maxTokens=100000');
+      
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
       let cleanedContent = response.text();
 
       console.log('🔍 Raw Gemini response:', cleanedContent.substring(0, 500) + '...');
