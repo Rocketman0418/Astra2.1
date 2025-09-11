@@ -44,6 +44,14 @@ export const useVisualization = () => {
 
         const prompt = `Create a comprehensive visual dashboard to help understand the information in the message below.
 
+DESIGN REQUIREMENTS:
+- Use a dark theme with gray-900 (#111827) background
+- Use gray-800 (#1f2937) and gray-700 (#374151) for card backgrounds
+- Use white (#ffffff) and gray-300 (#d1d5db) for text
+- Use blue (#3b82f6), purple (#8b5cf6), and cyan (#06b6d4) for accents and highlights
+- Match the visual style of a modern dark dashboard
+- Include proper spacing, rounded corners, and subtle shadows
+
 ${messageText}
 
 Return only the HTML code - no other text or formatting.`;
