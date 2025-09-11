@@ -35,8 +35,8 @@ export const useVisualization = () => {
         const model = genAI.getGenerativeModel({ 
           model: 'gemini-2.5-flash',
           generationConfig: {
-            temperature: 0.7,
-            topK: 40,
+            temperature: 1.0,
+            topK: 64,
             topP: 0.95,
             maxOutputTokens: 100000,
           }
@@ -44,18 +44,11 @@ export const useVisualization = () => {
 
         const prompt = `Create a comprehensive visual dashboard to help understand the information in the message below.
 
-CRITICAL: You must return ONLY valid HTML code that can be rendered directly in a browser. Do not include any explanatory text, markdown formatting, or code block markers.
-
-
-MESSAGE TEXT:
 ${messageText}
 
 Return only the HTML code - no other text or formatting.`;
 
       console.log('🤖 Generating visualization with Gemini...');
-      
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
       let cleanedContent = response.text();
 
       console.log('🔍 Raw Gemini response:', cleanedContent.substring(0, 500) + '...');
