@@ -58,8 +58,12 @@ Return only the HTML code - no other text or formatting.`;
       const response = await result.response;
       let cleanedContent = response.text();
 
+      console.log('🔍 Raw Gemini response:', cleanedContent.substring(0, 500) + '...');
+
       // Clean up the response - remove markdown code blocks if present
       cleanedContent = cleanedContent.replace(/```html\n?/g, '').replace(/```\n?/g, '').trim();
+      
+      console.log('🧹 Cleaned content preview:', cleanedContent.substring(0, 500) + '...');
 
       // Ensure it starts with DOCTYPE if it's a complete HTML document
       if (!cleanedContent.toLowerCase().includes('<!doctype') && !cleanedContent.toLowerCase().includes('<html')) {
