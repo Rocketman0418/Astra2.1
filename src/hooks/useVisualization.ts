@@ -31,30 +31,11 @@ export const useVisualization = () => {
           throw new Error('Gemini API key not found');
         }
 
-        // Initialize Gemini AI directly
-        const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ 
-          model: "gemini-2.5-flash",
-          generationConfig: {
-            temperature: 0.7,
-            topK: 40,
-            maxOutputTokens: 100000,
-          }
-        });
-
-
-        const prompt = `Create a visual dashboard to help understand the information in the message below.
-
-INSTRUCTIONS:
-- Read the message and create an appropriate interactive visualization
-- Use dark theme with background color #111827
-- Use blue (#3b82f6), purple (#8b5cf6), green (#10b981), and red (#ef4444) colors
-- Make it professional and visually appealing
-- Include charts, graphs, or visual elements that represent the key information
-- Return complete HTML code only
 
 MESSAGE TEXT:
 ${messageText}`;
+        const prompt = `Create a comprehensive visual dashboard to help understand the information in the message below.
 
       console.log('🤖 Generating visualization with Gemini...');
       
